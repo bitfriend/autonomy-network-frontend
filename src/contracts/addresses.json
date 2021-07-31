@@ -1,0 +1,8 @@
+{
+  "ropsten": {
+    "network": "Ropsten Testnet",
+    "registry": {
+      "address": "0xB82Ae7779aB1742734fCE32A4b7fDBCf020F2667"
+    }
+  }
+}
