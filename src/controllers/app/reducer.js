@@ -1,41 +1,28 @@
 import * as types from './types';
 
 const initialState = {
+  themeMode: 'light',
   web3Provider: null,
-  signedInAddress: '',
-  roles: [],
-  limitedMode: true,
-  loading: false
+  signedInAddress: ''
 };
 
 const appReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.LOAD_WEB3_MODAL:
-      const { web3Provider, signedInAddress, roles, limitedMode } = action.payload;
+      const { web3Provider, signedInAddress } = action.payload;
       return {
         ...state,
         web3Provider,
-        signedInAddress,
-        roles,
-        limitedMode,
-        loading: false
+        signedInAddress
       };
     case types.UNLOAD_WEB3_MODAL:
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
       return {
         ...state,
         web3Provider: null,
-        signedInAddress: '',
-        roles: [],
-        limitedMode: true,
-        loading: false
-      };
-    case types.UPDATE_LOADING:
-      return {
-        ...state,
-        loading: action.payload
+        signedInAddress: ''
       };
     default:
       return state;

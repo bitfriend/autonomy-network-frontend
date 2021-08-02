@@ -1,22 +1,33 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { CssBaseline, ThemeProvider } from '@material-ui/core';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
-import WalletButton from './components/WalletButton';
+import { darkTheme, lightTheme } from './helpers/themes';
+import Home from './scenes/Home';
+import SendMoney from './scenes/SendMoney';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 class App extends PureComponent {
   render() {
-    console.log(this.props.loading);
     return (
-      <div className="App">
-        <WalletButton />
-      </div>
+      <ThemeProvider theme={this.props.themeMode === 'dark' ? darkTheme : lightTheme}>
+        <CssBaseline />
+        <div className="App">
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/" children={<Home />} />
+              <Route exact path="/send_money" children={<SendMoney />} />
+            </Switch>
+          </BrowserRouter>
+        </div>
+      </ThemeProvider>
     );
   }
 }
 
 const mapStateToProps = ({ app }) => ({
-  web3Provider: app.web3Provider,
-  signedInAddress: app.signedInAddress
+  themeMode: app.themeMode
 });
 
 export default connect(mapStateToProps)(App);

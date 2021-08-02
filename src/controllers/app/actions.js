@@ -3,7 +3,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 
 import * as types from './types';
-import { newRec } from '../../helpers/contracts';
 
 const web3Modal = new Web3Modal({
   network: 'testnet',
@@ -20,7 +19,6 @@ const web3Modal = new Web3Modal({
 
 export const loadWeb3Modal = () => {
   return (dispatch, getState) => {
-    dispatch(updateLoading(true));
     web3Modal.connect().then(async (provider) => {
       const signedInAddress = provider.selectedAddress;
       const web3Provider = new Web3Provider(provider);
@@ -36,7 +34,7 @@ export const loadWeb3Modal = () => {
         throw e;
       }
     }).catch(e => {
-      dispatch(updateLoading(false));
+      console.log(e);
     });
   }
 }
@@ -47,8 +45,3 @@ export const unloadWeb3Modal = () => {
     dispatch({ type: types.UNLOAD_WEB3_MODAL });
   }
 }
-
-const updateLoading = (flag) => ({
-  type: types.UPDATE_LOADING,
-  payload: flag
-})

@@ -3,6 +3,9 @@
     "network": "Ropsten Testnet",
     "registry": {
       "address": "0xB82Ae7779aB1742734fCE32A4b7fDBCf020F2667"
+    },
+    "ethSender": {
+      "address": "0xfa0a8b60B2AF537DeC9832f72FD233e93E4C8463"
     }
   }
 }

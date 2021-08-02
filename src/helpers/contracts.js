@@ -4,6 +4,7 @@ import convert from 'ether-converter';
 
 import addresses from '../contracts/addresses.json';
 import Registry from '../contracts/abis/Registry.json';
+import EthSender from '../contracts/abis/EthSender.json';
 
 const SUCCESS_MSG = 'Success! Transaction has been submitted to the network. Please wait for confirmation on the blockchain.';
 const EXTRACT_ERROR_MESSAGE = /(?<="message":")(.*?)(?=")/g;
@@ -102,7 +103,7 @@ function getRegistryContract(w3provider) {
  *                      to using Autonomy. Usally the address of a dapp owner
  * @return id   The id of the request, equal to the index in `_hashedReqs`
  */
-export async function newRec(
+export async function newReq(
   w3provider,
   target,
   referer,
@@ -113,7 +114,7 @@ export async function newRec(
 ) {
   const contract = getRegistryContract(w3provider);
   try {
-    const id = await contract.newRec(
+    const id = await contract.newReq(
       target,
       referer,
       callData,
@@ -504,4 +505,12 @@ export async function getReferalCountOf(w3provider, addr) {
   } catch (e) {
     return e.message;
   }
+}
+
+/*
+ *  EthSender contract functions
+ */
+
+function getEthSenderContract(w3provider) {
+  return new Contract(addresses["ropsten"].ethSender.address, EthSender.abi, w3provider);
 }
