@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Contract } from '@ethersproject/contracts';
 import {
   Box,
   Button,
@@ -7,6 +6,7 @@ import {
   TextField,
   withStyles
 } from '@material-ui/core';
+import Web3 from 'web3';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -34,9 +34,9 @@ const styles = (theme) => ({
 
 class SendMoney extends PureComponent {
   state = {
-    delay: '',
-    amount: '',
-    recepient: ''
+    delay: '5',
+    amount: '0.04',
+    recepient: '0x976EA74026E726554dB657fA54763abd0C3a0aa9'
   }
 
   onChangeTime = (e) => {
@@ -52,15 +52,22 @@ class SendMoney extends PureComponent {
   }
 
   handleSubmit = async () => {
-    const contract = new Contract(addresses["ropsten"].ethSender.address, EthSender.abi, this.props.web3Provider);
-    const now = new Date().getTime() / 1000; // in seconds
+    const web3 = new Web3(this.props.web3Provider);
+    const contract = new web3.eth.Contract(EthSender.abi, addresses["ropsten"].ethSender.address, {
+      from: this.props.signedInAddress,
+      gasPrice: web3.utils.toWei('0.01', 'ether'),
+      gas: 1000000
+    });
+    // const signer = this.props.web3Provider.getSigner(this.props.signedInAddress);
+    // const contractWithSigner = contract.connect(signer);
+    const now = Math.floor(new Date().getTime() / 1000); // in seconds
     const time = now + this.state.delay * 60;
-    const userAddress = process.env.REACT_APP_DAPP_OWNER;
-    const callData = contract.sendEthAtTime(time, userAddress).encodeABI();
+    const userAddress = this.state.recepient;
+    const callData = contract.methods.sendEthAtTime(time, userAddress).encodeABI();
 
     const target = addresses["ropsten"].ethSender.address;
-    const referer = process.env.REACT_APP_DAPP_OWNER;
-    const ethForCall = this.state.amount;
+    const referer = this.state.recepient;
+    const ethForCall = web3.utils.toWei(this.state.amount, 'ether');
     const verifySender = false;
     const payWithAUTO = false;
     const id = await newReq(
@@ -152,4 +159,12 @@ class SendMoney extends PureComponent {
   }
 }
 
-export default withStyles(styles)(SendMoney);
+const mapStateToProps = ({ app }) => ({
+  web3Provider: app.web3Provider,
+  signedInAddress: app.signedInAddress
+});
+
+export default compose(
+  connect(mapStateToProps),
+  withStyles(styles)
+)(SendMoney);

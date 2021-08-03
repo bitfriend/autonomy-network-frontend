@@ -1,6 +1,4 @@
-import { AbiCoder } from '@ethersproject/abi';
-import { Contract } from '@ethersproject/contracts';
-import convert from 'ether-converter';
+import Web3 from 'web3';
 
 import addresses from '../contracts/addresses.json';
 import Registry from '../contracts/abis/Registry.json';
@@ -52,16 +50,6 @@ export async function getBlockNumber(w3provider) {
   return w3provider.getBlockNumber();
 }
 
-export function encodeParameters(types, values) {
-  const abi = new AbiCoder();
-  return abi.encode(types, values);
-}
-
-export function decodeParameters(types, values) {
-  const abi = new AbiCoder();
-  return abi.decode(types, values);
-}
-
 export function formatDate(timestamp) {
   if (timestamp === 0) {
     return 'None';
@@ -75,7 +63,8 @@ export function formatDate(timestamp) {
  */
 
 function getRegistryContract(w3provider) {
-  return new Contract(addresses["ropsten"].registry.address, Registry.abi, w3provider);
+  const web3 = new Web3(w3provider);
+  return new web3.eth.Contract(Registry.abi, addresses["ropsten"].registry.address);
 }
 
 //////////////////////////////////////////////////////////////
@@ -114,7 +103,7 @@ export async function newReq(
 ) {
   const contract = getRegistryContract(w3provider);
   try {
-    const id = await contract.newReq(
+    const id = await contract.methods.newReq(
       target,
       referer,
       callData,
@@ -135,7 +124,7 @@ export async function newReq(
 export async function getHashedReqs(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hashes = await contract.getHashedReqs();
+    const hashes = await contract.methods.getHashedReqs();
     return hashes;
   } catch (e) {
     return e.message;
@@ -154,7 +143,7 @@ export async function getHashedReqs(w3provider) {
 export async function getHashedReqsSlice(w3provider, startIdx, endIdx) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hashes = await contract.getHashedReqsSlice(startIdx, endIdx);
+    const hashes = await contract.methods.getHashedReqsSlice(startIdx, endIdx);
     return hashes;
   } catch (e) {
     return e.message;
@@ -168,7 +157,7 @@ export async function getHashedReqsSlice(w3provider, startIdx, endIdx) {
 export async function getHashedReqsLen(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const len = await contract.getHashedReqsLen();
+    const len = await contract.methods.getHashedReqsLen();
     return len;
   } catch (e) {
     return e.message;
@@ -183,7 +172,7 @@ export async function getHashedReqsLen(w3provider) {
 export async function getHashedReq(w3provider, id) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hash = await contract.getHashedReq(id);
+    const hash = await contract.methods.getHashedReq(id);
     return hash;
   } catch (e) {
     return e.message;
@@ -212,7 +201,7 @@ export async function getHashedReq(w3provider, id) {
 export async function newHashedReqUnveri(w3provider, hashedIpfsReq) {
   const contract = getRegistryContract(w3provider);
   try {
-    const id = await contract.newHashedReqUnveri(hashedIpfsReq);
+    const id = await contract.methods.newHashedReqUnveri(hashedIpfsReq);
     return id;
   } catch (e) {
     return e.message;
@@ -231,7 +220,7 @@ export async function newHashedReqUnveri(w3provider, hashedIpfsReq) {
 export async function getHashedReqsUnveriSlice(w3provider, startIdx, endIdx) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hashes = await contract.getHashedReqsUnveriSlice(startIdx, endIdx);
+    const hashes = await contract.methods.getHashedReqsUnveriSlice(startIdx, endIdx);
     return hashes;
   } catch (e) {
     return e.message;
@@ -245,7 +234,7 @@ export async function getHashedReqsUnveriSlice(w3provider, startIdx, endIdx) {
 export async function getHashedReqsUnveri(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hashes = await contract.getHashedReqsUnveri();
+    const hashes = await contract.methods.getHashedReqsUnveri();
     return hashes;
   } catch (e) {
     return e.message;
@@ -259,7 +248,7 @@ export async function getHashedReqsUnveri(w3provider) {
 export async function getHashedReqsUnveriLen(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const len = await contract.getHashedReqsUnveriLen();
+    const len = await contract.methods.getHashedReqsUnveriLen();
     return len;
   } catch (e) {
     return e.message;
@@ -274,7 +263,7 @@ export async function getHashedReqsUnveriLen(w3provider) {
 export async function getHashedReqUnveri(w3provider, id) {
   const contract = getRegistryContract(w3provider);
   try {
-    const hash = await contract.getHashedReqUnveri(id);
+    const hash = await contract.methods.getHashedReqUnveri(id);
     return hash;
   } catch (e) {
     return e.message;
@@ -295,7 +284,7 @@ export async function getHashedReqUnveri(w3provider, id) {
 export async function getReqBytes(w3provider, r) {
   const contract = getRegistryContract(w3provider);
   try {
-    const data = await contract.getReqBytes(r);
+    const data = await contract.methods.getReqBytes(r);
     return data;
   } catch (e) {
     return e.message;
@@ -312,7 +301,7 @@ export async function getReqBytes(w3provider, r) {
 export async function getIpfsReqBytes(w3provider, r, dataPrefix, dataPostfix) {
   const contract = getRegistryContract(w3provider);
   try {
-    const data = await contract.getIpfsReqBytes(r, dataPrefix, dataPostfix);
+    const data = await contract.methods.getIpfsReqBytes(r, dataPrefix, dataPostfix);
     return data;
   } catch (e) {
     return e.message;
@@ -330,7 +319,7 @@ export async function getIpfsReqBytes(w3provider, r, dataPrefix, dataPostfix) {
 export async function getHashedIpfsReq(w3provider, r, dataPrefix, dataPostfix) {
   const contract = getRegistryContract(w3provider);
   try {
-    const data = await contract.getHashedIpfsReq(r, dataPrefix, dataPostfix);
+    const data = await contract.methods.getHashedIpfsReq(r, dataPrefix, dataPostfix);
     return data;
   } catch (e) {
     return e.message;
@@ -345,7 +334,7 @@ export async function getHashedIpfsReq(w3provider, r, dataPrefix, dataPostfix) {
 export async function getReqFromBytes(w3provider, rBytes) {
   const contract = getRegistryContract(w3provider);
   try {
-    const r = await contract.getReqFromBytes(rBytes);
+    const r = await contract.methods.getReqFromBytes(rBytes);
     return r;
   } catch (e) {
     return e.message;
@@ -361,7 +350,7 @@ export async function getReqFromBytes(w3provider, rBytes) {
 export async function executeHashedReq(w3provider, id, r) {
   const contract = getRegistryContract(w3provider);
   try {
-    const gasUsed = await contract.executeHashedReq(id, r);
+    const gasUsed = await contract.methods.executeHashedReq(id, r);
     return gasUsed;
   } catch (e) {
     return e.message;
@@ -382,7 +371,7 @@ export async function executeHashedReqUnveri(
 ) {
   const contract = getRegistryContract(w3provider);
   try {
-    const gasUsed = await contract.executeHashedReqUnveri(
+    const gasUsed = await contract.methods.executeHashedReqUnveri(
       id,
       r,
       dataPrefix,
@@ -403,7 +392,7 @@ export async function executeHashedReqUnveri(
 export async function cancelHashedReq(w3provider, id, r) {
   const contract = getRegistryContract(w3provider);
   try {
-    await contract.cancelHashedReq(id, r);
+    await contract.methods.cancelHashedReq(id, r);
     return SUCCESS_MSG;
   } catch (e) {
     return catchError(e);
@@ -419,7 +408,7 @@ export async function cancelHashedReqUnveri(
 ) {
   const contract = getRegistryContract(w3provider);
   try {
-    await contract.cancelHashedReqUnveri(
+    await contract.methods.cancelHashedReqUnveri(
       id,
       r,
       dataPrefix,
@@ -440,7 +429,7 @@ export async function cancelHashedReqUnveri(
 export async function getAUTO(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const erc20 = await contract.getAUTO();
+    const erc20 = await contract.methods.getAUTO();
     return erc20;
   } catch (e) {
     return e.message;
@@ -450,7 +439,7 @@ export async function getAUTO(w3provider) {
 export async function getStakeManager(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const addr = await contract.getStakeManager();
+    const addr = await contract.methods.getStakeManager();
     return addr;
   } catch (e) {
     return e.message;
@@ -460,7 +449,7 @@ export async function getStakeManager(w3provider) {
 export async function getOracle(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const addr = await contract.getOracle();
+    const addr = await contract.methods.getOracle();
     return addr;
   } catch (e) {
     return e.message;
@@ -470,7 +459,7 @@ export async function getOracle(w3provider) {
 export async function getVerifiedForwarder(w3provider) {
   const contract = getRegistryContract(w3provider);
   try {
-    const addr = await contract.getVerifiedForwarder();
+    const addr = await contract.methods.getVerifiedForwarder();
     return addr;
   } catch (e) {
     return e.message;
@@ -480,7 +469,7 @@ export async function getVerifiedForwarder(w3provider) {
 export async function getReqCountOf(w3provider, addr) {
   const contract = getRegistryContract(w3provider);
   try {
-    const res = await contract.getReqCountOf(addr);
+    const res = await contract.methods.getReqCountOf(addr);
     return res;
   } catch (e) {
     return e.message;
@@ -490,7 +479,7 @@ export async function getReqCountOf(w3provider, addr) {
 export async function getExecCountOf(w3provider, addr) {
   const contract = getRegistryContract(w3provider);
   try {
-    const res = await contract.getExecCountOf(addr);
+    const res = await contract.methods.getExecCountOf(addr);
     return res;
   } catch (e) {
     return e.message;
@@ -500,7 +489,7 @@ export async function getExecCountOf(w3provider, addr) {
 export async function getReferalCountOf(w3provider, addr) {
   const contract = getRegistryContract(w3provider);
   try {
-    const res = await contract.getReferalCountOf(addr);
+    const res = await contract.methods.getReferalCountOf(addr);
     return res;
   } catch (e) {
     return e.message;
@@ -512,5 +501,6 @@ export async function getReferalCountOf(w3provider, addr) {
  */
 
 function getEthSenderContract(w3provider) {
-  return new Contract(addresses["ropsten"].ethSender.address, EthSender.abi, w3provider);
+  const web3 = new Web3(w3provider);
+  return new web3.eth.Contract(EthSender.abi, addresses["ropsten"].ethSender.address);
 }

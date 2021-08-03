@@ -5,6 +5,7 @@ import './App.css';
 import { darkTheme, lightTheme } from './helpers/themes';
 import Home from './scenes/Home';
 import SendMoney from './scenes/SendMoney';
+import PrivateRoute from './components/PrivateRoute';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -16,8 +17,8 @@ class App extends PureComponent {
         <div className="App">
           <BrowserRouter>
             <Switch>
-              <Route exact path="/" children={<Home />} />
-              <Route exact path="/send_money" children={<SendMoney />} />
+              <Route exact path="/" component={Home} />
+              <PrivateRoute exact path="/send_money" component={SendMoney} />
             </Switch>
           </BrowserRouter>
         </div>
