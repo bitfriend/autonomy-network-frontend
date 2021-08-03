@@ -17,7 +17,6 @@ import {
   ChevronRight,
   ExitToApp,
   Menu,
-  Restore,
   Update
 } from '@material-ui/icons';
 import clsx from 'clsx';
@@ -167,12 +166,6 @@ class MenuScene extends PureComponent {
                 <Update />
               </ListItemIcon>
               <ListItemText primary="Send Money" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <Restore />
-              </ListItemIcon>
-              <ListItemText primary="Send Money Wrapper" />
             </ListItem>
           </List>
         </Drawer>
