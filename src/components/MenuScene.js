@@ -1,10 +1,8 @@
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import {
   AppBar,
-  Box,
   Divider,
   Drawer,
-  Grid,
   IconButton,
   List,
   ListItem,

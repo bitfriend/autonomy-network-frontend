@@ -6,7 +6,6 @@ import { darkTheme, lightTheme } from './helpers/themes';
 import Home from './scenes/Home';
 import SendMoney from './scenes/SendMoney';
 import PrivateRoute from './components/PrivateRoute';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 class App extends PureComponent {

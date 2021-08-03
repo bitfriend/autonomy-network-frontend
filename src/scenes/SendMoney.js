@@ -7,13 +7,14 @@ import {
   withStyles
 } from '@material-ui/core';
 import Web3 from 'web3';
+import BigNumber from 'bignumber.js';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import MenuScene from '../components/MenuScene';
-import { newReq } from '../helpers/contracts';
 import addresses from '../contracts/addresses.json';
 import EthSender from '../contracts/abis/EthSender.json';
+import Registry from '../contracts/abis/Registry.json';
 
 const styles = (theme) => ({
   innerPadding: {
@@ -34,9 +35,9 @@ const styles = (theme) => ({
 
 class SendMoney extends PureComponent {
   state = {
-    delay: '5',
-    amount: '0.04',
-    recepient: '0x976EA74026E726554dB657fA54763abd0C3a0aa9'
+    delay: '',
+    amount: '',
+    recepient: ''
   }
 
   onChangeTime = (e) => {
@@ -53,25 +54,29 @@ class SendMoney extends PureComponent {
 
   handleSubmit = async () => {
     const web3 = new Web3(this.props.web3Provider);
-    const contract = new web3.eth.Contract(EthSender.abi, addresses["ropsten"].ethSender.address, {
+    const ethSenderContract = new web3.eth.Contract(EthSender.abi, addresses["ropsten"].ethSender.address, {
       from: this.props.signedInAddress,
-      gasPrice: web3.utils.toWei('0.01', 'ether'),
-      gas: 1000000
+      // gasPrice: web3.utils.toWei('0.01', 'ether'),
+      // gas: 1000000
     });
     // const signer = this.props.web3Provider.getSigner(this.props.signedInAddress);
     // const contractWithSigner = contract.connect(signer);
     const now = Math.floor(new Date().getTime() / 1000); // in seconds
     const time = now + this.state.delay * 60;
     const userAddress = this.state.recepient;
-    const callData = contract.methods.sendEthAtTime(time, userAddress).encodeABI();
+    const callData = ethSenderContract.methods.sendEthAtTime(time, userAddress).encodeABI();
 
+    const registryContract = new web3.eth.Contract(Registry.abi, addresses["ropsten"].registry.address, {
+      from: this.props.signedInAddress,
+      // gasPrice: web3.utils.toWei('0.01', 'ether'),
+      // gas: 1000000
+    });
     const target = addresses["ropsten"].ethSender.address;
     const referer = this.state.recepient;
     const ethForCall = web3.utils.toWei(this.state.amount, 'ether');
     const verifySender = false;
     const payWithAUTO = false;
-    const id = await newReq(
-      this.props.web3Provider,
+    const req = registryContract.methods.newReq(
       target,
       referer,
       callData,
@@ -79,7 +84,14 @@ class SendMoney extends PureComponent {
       verifySender,
       payWithAUTO
     );
-    console.log('registered id', id);
+    // 'value' would be `ethForCall` + 0.01 ETH. The 0.01 ETH is because
+    // more ETH needs to be sent to pay for the bot to execute the transaction.
+    // On Ropsten, 0.01 ETH above `ethForCall` should be more than enough - any excess
+    // that isn't used to pay the executing bot will get sent back to the user.
+    const v = new BigNumber(this.state.amount);
+    req.send({
+      value: web3.utils.toWei(v.plus(0.01).toString(), 'ether')
+    });
   }
 
   render() {
